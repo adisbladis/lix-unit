@@ -1,7 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs";
-    lix-unit.url = "github:nix-community/lix-unit";
+    lix-unit.url = "github:adisbladis/lix-unit";
     lix-unit.inputs.nixpkgs.follows = "nixpkgs";
   };
   outputs = { self, nixpkgs, lix-unit, ... }:

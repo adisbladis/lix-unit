@@ -120,7 +120,7 @@ def run_flake_checks():
             nix flake check \
               --no-write-lock-file \
               --extra-experimental-features "nix-command flakes" \
-              --override-input lix-unit "$NIX_UNIT_OUTPATH"
+              --override-input lix-unit "$LIX_UNIT_OUTPATH"
          """,
         ],
         stdout=subprocess.PIPE,

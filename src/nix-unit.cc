@@ -5,6 +5,7 @@
 #include <thread>
 #include <filesystem>
 #include <regex>
+#include <sstream>
 
 #include <lix/libexpr/eval-settings.hh>
 #include <lix/libutil/config.hh>
