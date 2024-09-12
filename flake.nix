@@ -29,10 +29,11 @@
           x86_64-linux = builtins.removeAttrs (self.packages.x86_64-linux // self.checks.x86_64-linux) [
             "default"
           ];
-          x86_64-darwin = builtins.removeAttrs (self.packages.x86_64-darwin // self.checks.x86_64-darwin) [
-            "default"
-            "treefmt"
-          ];
+          # Note: Lix itself fails to build on Darwin
+          # x86_64-darwin = builtins.removeAttrs (self.packages.x86_64-darwin // self.checks.x86_64-darwin) [
+          #   "default"
+          #   "treefmt"
+          # ];
         };
       };
 
