@@ -36,4 +36,4 @@ Pythonix is excluded as it's unmaintained.
 
 ## Documentation
 
-https://nix-community.github.io/lix-unit/
+https://adisbladis.github.io/lix-unit/
