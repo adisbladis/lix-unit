@@ -1,6 +1,6 @@
 # Simple
 
-In it's simplest form a `nix-unit` test suite is just an attribute set where test attributes are prefix with `test`.
+In it's simplest form a `lix-unit` test suite is just an attribute set where test attributes are prefix with `test`.
 Test attribute sets contain the keys `expr`, expressing the test & `expected`, expressing the expected results.
 
 An expression called `test.nix` containing:
@@ -23,9 +23,9 @@ An expression called `test.nix` containing:
 }
 ```
 
-Evaluated with `nix-unit`:
+Evaluated with `lix-unit`:
 ``` bash
-$ nix-unit test.nix
+$ lix-unit test.nix
 ```
 
 

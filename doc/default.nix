@@ -8,7 +8,7 @@
 }:
 
 stdenv.mkDerivation {
-  pname = "nix-unit-docs-html";
+  pname = "lix-unit-docs-html";
   version = "0.1";
   src = self;
   nativeBuildInputs = [

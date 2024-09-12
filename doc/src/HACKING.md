@@ -1,6 +1,6 @@
 # Hacking
 
-This document outlines hacking on `nix-unit` itself.
+This document outlines hacking on `lix-unit` itself.
 
 ## Getting started
 

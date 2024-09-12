@@ -38,13 +38,13 @@
             inherit (pkgs) stdenv;
             drvArgs = {
               srcDir = self;
-              nix = pkgs.nixVersions.nix_2_23;
+              lix = pkgs.lixVersions.lix_2_90;
             };
           in
           {
             treefmt.imports = [ ./dev/treefmt.nix ];
-            packages.nix-unit = pkgs.callPackage ./default.nix drvArgs;
-            packages.default = self'.packages.nix-unit;
+            packages.lix-unit = pkgs.callPackage ./default.nix drvArgs;
+            packages.default = self'.packages.lix-unit;
             packages.doc = pkgs.callPackage ./doc {
               inherit self;
               mdbook-nixdoc = inputs.mdbook-nixdoc.packages.${system}.default;
@@ -54,7 +54,7 @@
                 pythonEnv = pkgs.python3.withPackages (_ps: [ ]);
               in
               pkgs.mkShell {
-                nativeBuildInputs = self'.packages.nix-unit.nativeBuildInputs ++ [
+                nativeBuildInputs = self'.packages.lix-unit.nativeBuildInputs ++ [
                   pythonEnv
                   pkgs.difftastic
                   pkgs.nixdoc
@@ -62,10 +62,10 @@
                   pkgs.mdbook-open-on-gh
                   inputs.mdbook-nixdoc.packages.${system}.default
                 ];
-                inherit (self'.packages.nix-unit) buildInputs;
+                inherit (self'.packages.lix-unit) buildInputs;
                 shellHook = lib.optionalString stdenv.isLinux ''
-                  export NIX_DEBUG_INFO_DIRS="${pkgs.curl.debug}/lib/debug:${drvArgs.nix.debug}/lib/debug''${NIX_DEBUG_INFO_DIRS:+:$NIX_DEBUG_INFO_DIRS}"
-                  export NIX_UNIT_OUTPATH=${self}
+                  export LIX_DEBUG_INFO_DIRS="${pkgs.curl.debug}/lib/debug:${drvArgs.lix.debug}/lib/debug''${LIX_DEBUG_INFO_DIRS:+:$LIX_DEBUG_INFO_DIRS}"
+                  export LIX_UNIT_OUTPATH=${self}
                 '';
               };
           };

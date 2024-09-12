@@ -47,7 +47,7 @@ class TestResult:
 
 
 def get_output_structured(stream: str, results: Dict[str, TestResult]):
-    """Returns the nix-unit output as a structured dict"""
+    """Returns the lix-unit output as a structured dict"""
     lines = stream.splitlines()
 
     for idx, line in enumerate(lines):
@@ -120,7 +120,7 @@ def run_flake_checks():
             nix flake check \
               --no-write-lock-file \
               --extra-experimental-features "nix-command flakes" \
-              --override-input nix-unit "$NIX_UNIT_OUTPATH"
+              --override-input lix-unit "$NIX_UNIT_OUTPATH"
          """,
         ],
         stdout=subprocess.PIPE,

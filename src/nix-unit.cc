@@ -1,31 +1,32 @@
+#include <lix/config.h> // IWYU pragma: keep
+
 #include <map>
 #include <iostream>
 #include <thread>
 #include <filesystem>
 #include <regex>
 
-#include <nix/eval-settings.hh>
-#include <nix/config.h>
-#include <nix/shared.hh>
-#include <nix/store-api.hh>
-#include <nix/eval.hh>
-#include <nix/eval-inline.hh>
-#include <nix/util.hh>
-#include <nix/get-drvs.hh>
-#include <nix/globals.hh>
-#include <nix/common-eval-args.hh>
-#include <nix/flake/flakeref.hh>
-#include <nix/flake/flake.hh>
-#include <nix/attr-path.hh>
-#include <nix/derivations.hh>
-#include <nix/local-fs-store.hh>
-#include <nix/logging.hh>
-#include <nix/error.hh>
-#include <nix/installables.hh>
-#include <nix/path-with-outputs.hh>
-#include <nix/installable-flake.hh>
-
-#include <nix/value-to-json.hh>
+#include <lix/libexpr/eval-settings.hh>
+#include <lix/libutil/config.hh>
+#include <lix/libmain/shared.hh>
+#include <lix/libstore/store-api.hh>
+#include <lix/libexpr/eval.hh>
+#include <lix/libexpr/eval-inline.hh>
+#include <lix/libutil/terminal.hh>
+#include <lix/libexpr/get-drvs.hh>
+#include <lix/libstore/globals.hh>
+#include <lix/libcmd/common-eval-args.hh>
+#include <lix/libexpr/flake/flakeref.hh>
+#include <lix/libexpr/flake/flake.hh>
+#include <lix/libexpr/attr-path.hh>
+#include <lix/libstore/derivations.hh>
+#include <lix/libstore/local-fs-store.hh>
+#include <lix/libutil/logging.hh>
+#include <lix/libutil/error.hh>
+#include <lix/libcmd/installables.hh>
+#include <lix/libcmd/installable-flake.hh>
+#include <lix/libstore/path-with-outputs.hh>
+#include <lix/libexpr/value-to-json.hh>
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -98,12 +99,12 @@ struct MyArgs : MixEvalArgs, MixCommonArgs, RootArgs {
                                   .useRegistries = false,
                                   .allowUnlocked = false};
 
-    MyArgs() : MixCommonArgs("nix-unit") {
+    MyArgs() : MixCommonArgs("lix-unit") {
         addFlag({
             .longName = "help",
             .description = "show usage information",
             .handler = {[&]() {
-                printf("USAGE: nix-unit [options] expr\n\n");
+                printf("USAGE: lix-unit [options] expr\n\n");
                 for (const auto &[name, flag] : longFlags) {
                     if (hiddenCategories.count(flag->category)) {
                         continue;
@@ -173,8 +174,8 @@ static Value *releaseExprTopLevelValue(EvalState &state, Bindings &autoArgs) {
     Value vTop;
 
     if (myArgs.fromArgs) {
-        Expr *e =
-            state.parseExprFromString(myArgs.releaseExpr, state.rootPath("."));
+        CanonPath rootPath(".");
+        Expr *e = state.parseExprFromString(myArgs.releaseExpr, rootPath);
         state.eval(e, vTop);
     } else {
         state.evalFile(lookupFileArg(state, myArgs.releaseExpr), vTop);
@@ -198,7 +199,6 @@ void runDiffTool(std::string diffTool, std::string_view actual,
 
     auto res = runProgram(RunOptions{
         .program = "/bin/sh",
-        .lookupPath = true,
         .args = {"-c", diffTool + " --color always " + actualPath + " " +
                            expectedPath},
     });
@@ -264,13 +264,13 @@ static TestResults runTests(ref<EvalState> state, Bindings &autoArgs) {
                 throw EvalError(*state, "Test is not an attrset");
             }
 
-            auto expr = test->attrs()->get(exprNameSym);
+            auto expr = test->attrs->get(exprNameSym);
             if (!expr) {
                 throw EvalError(*state, "Missing attrset key 'expr'");
             }
 
-            auto expectedError = test->attrs()->get(expectedErrorNameSym);
-            auto expected = test->attrs()->get(expectedNameSym);
+            auto expectedError = test->attrs->get(expectedErrorNameSym);
+            auto expected = test->attrs->get(expectedNameSym);
 
             bool success = false;
 
@@ -298,7 +298,7 @@ static TestResults runTests(ref<EvalState> state, Bindings &autoArgs) {
                 // Get expectedError.type
                 std::string expectedErrorType;
                 auto expectedErrorTypeAttr =
-                    expectedError->value->attrs()->get(typeNameSym);
+                    expectedError->value->attrs->get(typeNameSym);
                 if (expectedErrorTypeAttr) {
                     expectedErrorType = state->forceStringNoCtx(
                         *expectedErrorTypeAttr->value, noPos,
@@ -308,7 +308,7 @@ static TestResults runTests(ref<EvalState> state, Bindings &autoArgs) {
                 // Get expectedError.msg
                 std::string expectedErrorMsg;
                 auto expectedErrorMsgAttr =
-                    expectedError->value->attrs()->get(msgNameSym);
+                    expectedError->value->attrs->get(msgNameSym);
                 if (expectedErrorMsgAttr) {
                     expectedErrorMsg =
                         state->forceStringNoCtx(*expectedErrorMsgAttr->value,
@@ -392,7 +392,7 @@ static TestResults runTests(ref<EvalState> state, Bindings &autoArgs) {
     std::function<void(std::vector<std::string>, nix::Value *)> recurseTests;
     recurseTests = [&](std::vector<std::string> attrPath,
                        nix::Value *testAttrs) -> void {
-        for (auto &i : testAttrs->attrs()->lexicographicOrder(state->symbols)) {
+        for (auto &i : testAttrs->attrs->lexicographicOrder(state->symbols)) {
             const std::string &name = state->symbols[i->name];
 
             // Copy and append current attribute
@@ -459,7 +459,7 @@ int main(int argc, char **argv) {
         auto evalStore =
             myArgs.evalStoreUrl ? openStore(*myArgs.evalStoreUrl) : openStore();
         auto evalState =
-            std::make_shared<EvalState>(myArgs.lookupPath, evalStore);
+            std::make_shared<EvalState>(myArgs.searchPath, evalStore);
 
         auto results = runTests(ref<EvalState>(evalState),
                                 *myArgs.getAutoArgs(*evalState));

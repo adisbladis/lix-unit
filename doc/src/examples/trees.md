@@ -1,7 +1,7 @@
 # Trees
 
 While simple flat attribute sets works you might want to express your tests as a deep attribute set.
-When `nix-unit` encounters an attribute which name is _not_ prefixed with `test` it recurses into that attribute to find more tests.
+When `lix-unit` encounters an attribute which name is _not_ prefixed with `test` it recurses into that attribute to find more tests.
 
 Example:
 ``` nix
@@ -42,7 +42,7 @@ Results in the output:
 error:
        … while calling the 'throw' builtin
 
-         at /home/adisbladis/sauce/github.com/nix-community/nix-unit/trees.nix:13:12:
+         at /home/adisbladis/sauce/github.com/nix-community/lix-unit/trees.nix:13:12:
 
            12|   testFailEval = {
            13|     expr = throw "NO U";
