@@ -38,7 +38,7 @@ stdenv.mkDerivation {
   ] ++ (lib.optional stdenv.cc.isClang [ clang-tools ]);
 
   postInstall = ''
-    wrapProgram "$out/bin/lix-unit" --prefix PATH : ${difftastic}/bin
+    wrapProgram "$out/bin/nix-unit" --prefix PATH : ${difftastic}/bin
   '';
 
   meta = {
@@ -47,6 +47,6 @@ stdenv.mkDerivation {
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ adisbladis ];
     platforms = lib.platforms.unix;
-    mainProgram = "lix-unit";
+    mainProgram = "nix-unit";
   };
 }

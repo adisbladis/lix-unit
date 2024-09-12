@@ -25,7 +25,7 @@ An expression called `test.nix` containing:
 
 Evaluated with `lix-unit`:
 ``` bash
-$ lix-unit test.nix
+$ nix-unit test.nix
 ```
 
 

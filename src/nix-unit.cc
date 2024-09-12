@@ -100,12 +100,12 @@ struct MyArgs : MixEvalArgs, MixCommonArgs, RootArgs {
                                   .useRegistries = false,
                                   .allowUnlocked = false};
 
-    MyArgs() : MixCommonArgs("lix-unit") {
+    MyArgs() : MixCommonArgs("nix-unit") {
         addFlag({
             .longName = "help",
             .description = "show usage information",
             .handler = {[&]() {
-                printf("USAGE: lix-unit [options] expr\n\n");
+                printf("USAGE: nix-unit [options] expr\n\n");
                 for (const auto &[name, flag] : longFlags) {
                     if (hiddenCategories.count(flag->category)) {
                         continue;

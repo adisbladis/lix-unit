@@ -16,7 +16,7 @@ configure_file(
   configuration: autotool_config
 )
 
-executable('lix-unit', src,
+executable('nix-unit', src,
            dependencies : [
              nix_main_dep,
              nix_store_dep,

@@ -1,4 +1,4 @@
-project('lix-unit', 'cpp',
+project('nix-unit', 'cpp',
   version : '0.1.0',
   license : 'GPL-3.0',
   default_options : [
