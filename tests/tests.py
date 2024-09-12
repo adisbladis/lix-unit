@@ -113,15 +113,13 @@ def run_flake_checks():
 
     proc = subprocess.run(
         [
-            "bash",
-            "-c",
-            """
-            cd ../lib/flake-checks
-            nix flake check \
-              --no-write-lock-file \
-              --extra-experimental-features "nix-command flakes" \
-              --override-input lix-unit "$LIX_UNIT_OUTPATH"
-         """,
+            "nix", "flake", "check",
+            "--no-write-lock-file",
+            "--no-update-lock-file",
+            "--reference-lock-file", "../../flake.lock",
+            "--extra-experimental-features", "nix-command flakes",
+            "--override-input", "lix-unit", os.environ["LIX_UNIT_OUTPATH"],
+            "./../lib/flake-checks"
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,

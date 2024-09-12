@@ -176,7 +176,7 @@ static Value *releaseExprTopLevelValue(EvalState &state, Bindings &autoArgs) {
 
     if (myArgs.fromArgs) {
         CanonPath rootPath(".");
-        Expr *e = state.parseExprFromString(myArgs.releaseExpr, rootPath);
+        Expr &e = state.parseExprFromString(myArgs.releaseExpr, rootPath);
         state.eval(e, vTop);
     } else {
         state.evalFile(lookupFileArg(state, myArgs.releaseExpr), vTop);

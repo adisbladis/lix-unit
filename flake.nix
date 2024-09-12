@@ -49,7 +49,7 @@
           inherit (pkgs) stdenv;
           drvArgs = {
             srcDir = self;
-            lix = pkgs.lixVersions.lix_2_90;
+            lix = pkgs.lixVersions.latest;
           };
         in
         {
