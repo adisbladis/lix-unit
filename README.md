@@ -26,13 +26,19 @@ Pythonix is excluded as it's unmaintained.
 
 | Tool        | Can test eval failures | Tests defined in Nix | in nixpkgs | snapshot testing(1) | Supports Lix |
 | ----------- | ---------------------- | -------------------- | ---------- |-------------------- | ------------ |
-| Lix-unit    | yes                    | yes                  | no         | no                  | yes          |
+| Lix-unit    | yes                    | yes                  | no         | no                  | yes (2)      |
 | Nix-unit    | yes                    | yes                  | yes        | no                  | no           |
 | runTests    | no                     | yes                  | yes        | no                  | yes          |
 | Nixt        | no                     | yes                  | no         | no                  | yes          |
 | Namaka      | no                     | yes                  | yes        | yes                 | ?            |
 
 1. [Snapshot testing](https://github.com/nix-community/namaka#snapshot-testing)
+2. While lix-unit supports Lix, it does not support Nix, and vice versa.
+
+## Using with Nix instead of Lix
+
+The Lix codebase has gone through significant changes, and it's not tenable to have a single code base that supports both implementations.
+Therefore lix-unit was forked from [nix-unit](https://github.com/nix-community/nix-unit).
 
 ## Documentation
 
