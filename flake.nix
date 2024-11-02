@@ -3,10 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    lix.url = "git+https://git.lix.systems/lix-project/lix.git";
+    lix.inputs.nixpkgs.follows = "nixpkgs";
+
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
+
     mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
     mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
     mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
@@ -19,6 +25,7 @@
       nix-github-actions,
       mdbook-nixdoc,
       treefmt-nix,
+      lix,
     }:
     let
       forAllSystems = lib.genAttrs lib.systems.flakeExposed;
@@ -47,7 +54,7 @@
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
           drvArgs = {
             srcDir = self;
-            lix = pkgs.lixVersions.latest;
+            lix = lix.packages.${system}.default;
           };
         in
         {
