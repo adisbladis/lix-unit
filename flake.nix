@@ -5,7 +5,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     lix.url = "git+https://git.lix.systems/lix-project/lix.git";
-    lix.inputs.nixpkgs.follows = "nixpkgs";
+    lix.flake = false;
 
     treefmt-nix.url = "github:numtide/treefmt-nix";
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
@@ -31,6 +31,12 @@
       forAllSystems = lib.genAttrs lib.systems.flakeExposed;
       inherit (nixpkgs) lib;
 
+      lix' = forAllSystems (system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+      in pkgs.callPackage "${lix}/package.nix" {
+        stdenv = pkgs.clangStdenv;
+      });
+
     in
     {
       githubActions = nix-github-actions.lib.mkGithubMatrix {
@@ -51,10 +57,10 @@
       packages = forAllSystems (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          pkgs = nixpkgs.legacyPackages.${system};
           drvArgs = {
             srcDir = self;
-            lix = lix.packages.${system}.default;
+            lix = lix'.${system};
           };
         in
         {
@@ -78,11 +84,11 @@
       devShells = forAllSystems (
         system:
         let
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          pkgs = nixpkgs.legacyPackages.${system};
           inherit (pkgs) stdenv;
           drvArgs = {
             srcDir = self;
-            lix = pkgs.lixVersions.latest;
+            lix = lix'.${system};
           };
         in
         {
