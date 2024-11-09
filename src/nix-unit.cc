@@ -28,6 +28,7 @@
 #include <lix/libcmd/installable-flake.hh>
 #include <lix/libstore/path-with-outputs.hh>
 #include <lix/libexpr/value-to-json.hh>
+#include <lix/libstore/temporary-dir.hh>
 
 #include <sys/types.h>
 #include <sys/wait.h>
