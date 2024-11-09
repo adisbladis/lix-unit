@@ -12,10 +12,6 @@
 
     nix-github-actions.url = "github:nix-community/nix-github-actions";
     nix-github-actions.inputs.nixpkgs.follows = "nixpkgs";
-
-    mdbook-nixdoc.url = "github:adisbladis/mdbook-nixdoc";
-    mdbook-nixdoc.inputs.nixpkgs.follows = "nixpkgs";
-    mdbook-nixdoc.inputs.nix-github-actions.follows = "nix-github-actions";
   };
 
   outputs =
@@ -23,7 +19,6 @@
       self,
       nixpkgs,
       nix-github-actions,
-      mdbook-nixdoc,
       treefmt-nix,
       lix,
     }:
@@ -31,11 +26,15 @@
       forAllSystems = lib.genAttrs lib.systems.flakeExposed;
       inherit (nixpkgs) lib;
 
-      lix' = forAllSystems (system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in pkgs.callPackage "${lix}/package.nix" {
-        stdenv = pkgs.clangStdenv;
-      });
+      lix' = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        pkgs.callPackage "${lix}/package.nix" {
+          stdenv = pkgs.clangStdenv;
+        }
+      );
 
     in
     {
@@ -68,7 +67,6 @@
           default = self.packages.${system}.lix-unit;
           doc = pkgs.callPackage ./doc {
             inherit self;
-            mdbook-nixdoc = mdbook-nixdoc.packages.${system}.default;
           };
         }
       );
@@ -103,7 +101,7 @@
                 pkgs.nixdoc
                 pkgs.mdbook
                 pkgs.mdbook-open-on-gh
-                mdbook-nixdoc.packages.${system}.default
+                pkgs.mdbook-cmdrun
               ];
               inherit (self.packages.${system}.lix-unit) buildInputs;
               shellHook = lib.optionalString stdenv.isLinux ''
