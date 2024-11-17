@@ -426,7 +426,7 @@ static TestResults runTests(ref<EvalState> state, Bindings &autoArgs) {
 int main(int argc, char **argv) {
     return handleExceptions(argv[0], [&]() {
         initNix();
-        initGC();
+        initLibExpr();
 
         myArgs.parseCmdline(argvToStrings(argc, argv));
 
