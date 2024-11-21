@@ -423,6 +423,15 @@ static TestResults runTests(ref<EvalState> state, Bindings &autoArgs) {
     return results;
 }
 
+Strings argvToStrings(int argc, char **argv) {
+    Strings args;
+    argc--;
+    argv++;
+    while (argc--)
+        args.push_back(*argv++);
+    return args;
+}
+
 int main(int argc, char **argv) {
     return handleExceptions(argv[0], [&]() {
         initNix();
